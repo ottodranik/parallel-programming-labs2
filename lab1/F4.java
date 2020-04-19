@@ -4,26 +4,11 @@ public class F4 implements Runnable {
 
   public static int count = 0; // количество созданных потоков
   String name; // имя потока
-  Matrix B = new Matrix(13);
-  Matrix D = new Matrix(13);
-  Matrix MM = new Matrix(13, 13);
-  Matrix MC = new Matrix(13, 13);
-  Matrix f4 = new Matrix(13, 13);
-
-  public F4(String name, Matrix B, Matrix MC, Matrix D, Matrix MM) {
-    this.name = name.toUpperCase();
-    this.B = B;
-    this.MC = MC;
-    this.D = D;
-    this.MM = MM;
-  }
+  Matrix f4 = new Matrix(0, 0);
+  MatrixCalculations matrixCalc = MatrixCalculations.getInstance();
 
   public F4(String name) {
     this.name = name.toUpperCase();
-    B.fillRandomValues();
-    D.fillRandomValues();
-    MM.fillRandomValues();
-    MC.fillRandomValues();
   }
 
   // O = (P+R)*(MS*MT)
@@ -37,10 +22,7 @@ public class F4 implements Runnable {
     try {
       // Displaying the thread that is running
       start = System.nanoTime();
-      f4 = Matrix.add(
-        Matrix.multiply(MC, B),
-        Matrix.multiply(MM, D)
-      );
+      f4 = matrixCalc.f4();
       finish = System.nanoTime();
     } catch (Exception e) {
       // Throwing an exception

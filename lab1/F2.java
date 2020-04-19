@@ -4,32 +4,13 @@ public class F2 implements Runnable {
 
   public static int count = 0; // количество созданных потоков
   String name; // имя потока
-  Matrix MB = new Matrix(13, 13);
-  Matrix MC = new Matrix(13, 13);
-  Matrix MM = new Matrix(13, 13);
-  Matrix MO = new Matrix(13, 13);
-  Matrix MX = new Matrix(13, 13);
-  Matrix f2 = new Matrix(13, 13);
-
-  public F2(String name, Matrix MB, Matrix MO, Matrix MC, Matrix MX, Matrix MM) {
-    this.name = name.toUpperCase();
-    this.MB = MB;
-    this.MO = MO;
-    this.MC = MC;
-    this.MX = MX;
-    this.MM = MM;
-  }
+  Matrix f2 = new Matrix(0, 0);
+  MatrixCalculations matrixCalc = MatrixCalculations.getInstance();
 
   public F2(String name) {
     this.name = name.toUpperCase();
-    MB.fillRandomValues();
-    MC.fillRandomValues();
-    MM.fillRandomValues();
-    MO.fillRandomValues();
-    MX.fillRandomValues();
   }
 
-  // MF = k*MG - h*MK*ML
   @Override
   synchronized public void run() {
     long start = 0, finish = 0;
@@ -40,13 +21,7 @@ public class F2 implements Runnable {
     try {
       // Displaying the thread that is running
       start = System.nanoTime();
-      f2 = Matrix.subtract(
-        Matrix.add(
-          Matrix.multiply(MB, MO),
-          Matrix.multiply(MC, MX)
-        ),
-        MM
-      );
+      f2 = matrixCalc.f2();
       finish = System.nanoTime();
     } catch (Exception e) {
       // Throwing an exception

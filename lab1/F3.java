@@ -4,29 +4,11 @@ public class F3 implements Runnable {
 
   public static int count = 0; // количество созданных потоков
   String name; // имя потока
-  Matrix MD = new Matrix(13, 13);
-  Matrix ME = new Matrix(13, 13);
-  Matrix MM = new Matrix(13, 13);
-  Matrix MT = new Matrix(13, 13);
-  Matrix MZ = new Matrix(13, 13);
-  Matrix f3 = new Matrix(13, 13);
-
-  public F3(String name, Matrix MD, Matrix MT, Matrix MZ, Matrix ME, Matrix MM) {
-    this.name = name.toUpperCase();
-    this.MD = MD;
-    this.ME = ME;
-    this.MM = MM;
-    this.MT = MT;
-    this.MZ = MZ;
-  }
+  Matrix f3 = new Matrix(0, 0);
+  MatrixCalculations matrixCalc = MatrixCalculations.getInstance();
 
   public F3(String name) {
     this.name = name.toUpperCase();
-    MD.fillRandomValues();
-    ME.fillRandomValues();
-    MM.fillRandomValues();
-    MT.fillRandomValues();
-    MZ.fillRandomValues();
   }
 
   // O = (P+R)*(MS*MT)
@@ -40,13 +22,7 @@ public class F3 implements Runnable {
     try {
       // Displaying the thread that is running
       start = System.nanoTime();
-      f3 = Matrix.subtract(
-        Matrix.multiply(
-          MD,
-          Matrix.add(MT, MZ)
-        ),
-        Matrix.multiply(ME, MM)
-      );
+      f3 = matrixCalc.f3();
       finish = System.nanoTime();
     } catch (Exception e) {
       // Throwing an exception

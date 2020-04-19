@@ -32,53 +32,10 @@ class Lab1 {
     System.out.println(Thread.currentThread().getName() + " started...\n");
     OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
 
-    Matrix A = new Matrix(888);
-    Matrix B = new Matrix(888);
-    Matrix D = new Matrix(888);
-    Matrix E = new Matrix(888);
-
-    Matrix MA = new Matrix(888, 888);
-    Matrix MB = new Matrix(888, 888);
-    Matrix MC = new Matrix(888, 888);
-    Matrix MD = new Matrix(888, 888);
-    Matrix ME = new Matrix(888, 888);
-    Matrix MM = new Matrix(888, 888);
-    Matrix MO = new Matrix(888, 888);
-    Matrix MT = new Matrix(888, 888);
-    Matrix MX = new Matrix(888, 888);
-    Matrix MZ = new Matrix(888, 888);
-
-    B.fillRandomValues();
-    D.fillRandomValues();
-    E.fillRandomValues();
-
-    MB.fillRandomValues();
-    MC.fillRandomValues();
-    MD.fillRandomValues();
-    ME.fillRandomValues();
-    MM.fillRandomValues();
-    MO.fillRandomValues();
-    MT.fillRandomValues();
-    MX.fillRandomValues();
-    MZ.fillRandomValues();
-
     /** 
      * No threads block
      */
-    // strictCalculations(
-    //   B,
-    //   D,
-    //   E,
-    //   MB,
-    //   MC,
-    //   MD,
-    //   ME,
-    //   MM,
-    //   MO,
-    //   MT,
-    //   MX,
-    //   MZ
-    // );
+    strictCalculations();
   
     /** 
      * Multithread block
@@ -89,22 +46,15 @@ class Lab1 {
 
     start = System.nanoTime();
 
-    F1 f1 = new F1(Lab1.threadNameF1, B, MC, MZ, E, MM, MO);  // А=В*(МС+MZ)+E*MM-МО
-    F2 f2 = new F2(Lab1.threadNameF2, MB, MO, MC, MX, MM);    // МА=МВ*MО+МС*МХ-MM)
-    F3 f3 = new F3(Lab1.threadNameF3, MD, MT, MZ, ME, MM);    // MА=MD*(MT+MZ)-(ME*MM)
-    F4 f4 = new F4(Lab1.threadNameF4, B, MC, D, MM);          // E=В*МС+D*MM
+    F1 f1 = new F1(Lab1.threadNameF1);  // А=В*(МС+MZ)+E*MM-МО
+    F2 f2 = new F2(Lab1.threadNameF2);  // МА=МВ*MО+МС*МХ-MM)
+    F3 f3 = new F3(Lab1.threadNameF3);  // MА=MD*(MT+MZ)-(ME*MM)
+    F4 f4 = new F4(Lab1.threadNameF4);  // E=В*МС+D*MM
     
-    // NOTE: А=В*(МС+MZ)+E*MM-МО
-    Thread t1 = new Thread(f1);
-
-    // NOTE: МА=МВ*MО+МС*МХ-MM)
-    Thread t2 = new Thread(f2);
-
-    // NOTE: MА=MD*(MT+MZ)-(ME*MM)
-    Thread t3 = new Thread(f3);
-
-    // NOTE: E=В*МС+D*MM
-    Thread t4 = new Thread(f4); 
+    Thread t1 = new Thread(f1); // NOTE: А=В*(МС+MZ)+E*MM-МО
+    Thread t2 = new Thread(f2); // NOTE: МА=МВ*MО+МС*МХ-MM    
+    Thread t3 = new Thread(f3); // NOTE: MА=MD*(MT+MZ)-(ME*MM)
+    Thread t4 = new Thread(f4); // NOTE: E=В*МС+D*MM
 
     t1.start();
     t2.start();
@@ -120,7 +70,7 @@ class Lab1 {
       System.out.println("Interrupted");
     }
 
-    // showCpuLoadingTillEnd(operatingSystemMXBean, t1, t2, t3, t4);
+    showCpuLoadingTillEnd(operatingSystemMXBean, t1, t2, t3, t4);
 
     finish = System.nanoTime();
     System.out.println();
@@ -132,35 +82,15 @@ class Lab1 {
   /** 
    * Calculations without threads 
    */
-  private static void strictCalculations(
-    Matrix B,
-    Matrix D,
-    Matrix E,
-    Matrix MB,
-    Matrix MC,
-    Matrix MD,
-    Matrix ME,
-    Matrix MM,
-    Matrix MO,
-    Matrix MT,
-    Matrix MX,
-    Matrix MZ
-  ) throws java.lang.Exception {
+  private static void strictCalculations() throws java.lang.Exception {
     long start = 0, finish = 0, delta = 0;
+
+    MatrixCalculations matrixCalc = MatrixCalculations.getInstance();
 
     System.out.println(Thread.currentThread().getName() + " DIRECT calculations started...");
     start = System.nanoTime();
     // А=В*(МС+MZ)+E*(MM-МО)
-    Matrix f1 = Matrix.add(
-      Matrix.multiply(
-        Matrix.add(MC, MZ),
-        B
-      ),
-      Matrix.multiply(
-        Matrix.subtract(MM, MO),
-        E
-      )
-    );
+    Matrix f1 = matrixCalc.f1();
     finish = System.nanoTime();
     System.out.println("  F1 finished with time: " + Logger.getTime(finish - start));
     Logger.displayMatrix("F1", f1);
@@ -168,13 +98,7 @@ class Lab1 {
     
     delta = System.nanoTime();
     // МА=МВ*MО+МС*МХ-MM)
-    Matrix f2 = Matrix.subtract(
-      Matrix.add(
-        Matrix.multiply(MB, MO),
-        Matrix.multiply(MC, MX)
-      ),
-      MM
-    );
+    Matrix f2 = matrixCalc.f2();
     finish = System.nanoTime();
     System.out.println("  F2 finished with time: " + Logger.getTime(finish - delta));
     Logger.displayMatrix("F2", f2);
@@ -182,23 +106,15 @@ class Lab1 {
     
     delta = System.nanoTime();
     // MА=MD*(MT+MZ)-(ME*MM)
-    Matrix f3 = Matrix.subtract(
-      Matrix.multiply(
-        MD,
-        Matrix.add(MT, MZ)
-      ),
-      Matrix.multiply(ME, MM)
-    );
+    Matrix f3 = matrixCalc.f3();
     finish = System.nanoTime();
     System.out.println("  F3 finished with time: " + Logger.getTime(finish - delta));
     Logger.displayMatrix("F3", f3);
+    System.out.println();
 
     delta = System.nanoTime();
     // E=В*МС+D*MM
-    Matrix f4 = Matrix.add(
-      Matrix.multiply(MC, B),
-      Matrix.multiply(MM, D)
-    );
+    Matrix f4 = matrixCalc.f4();
     finish = System.nanoTime();
     System.out.println("  F4 finished with time: " + Logger.getTime(finish - delta));
     Logger.displayMatrix("F4", f4);
@@ -210,7 +126,13 @@ class Lab1 {
     System.out.println();
   }
 
-  private static void showCpuLoadingTillEnd(OperatingSystemMXBean operatingSystemMXBean, Thread t1, Thread t2, Thread t3, Thread t4) {
+  private static void showCpuLoadingTillEnd(
+    OperatingSystemMXBean operatingSystemMXBean,
+    Thread t1,
+    Thread t2,
+    Thread t3,
+    Thread t4
+  ) {
     try {
       while (
         t1.isAlive()
