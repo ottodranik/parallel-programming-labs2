@@ -35,7 +35,7 @@ class Lab1 {
     /** 
      * No threads block
      */
-    strictCalculations();
+    // strictCalculations();
   
     /** 
      * Multithread block
@@ -70,7 +70,7 @@ class Lab1 {
       System.out.println("Interrupted");
     }
 
-    showCpuLoadingTillEnd(operatingSystemMXBean, t1, t2, t3, t4);
+    // showCpuLoadingTillEnd(operatingSystemMXBean, t1, t2, t3, t4);
 
     finish = System.nanoTime();
     System.out.println();
@@ -118,8 +118,8 @@ class Lab1 {
     finish = System.nanoTime();
     System.out.println("  F4 finished with time: " + Logger.getTime(finish - delta));
     Logger.displayMatrix("F4", f4);
-
     System.out.println();
+
     finish = System.nanoTime();
     System.out.println(Thread.currentThread().getName() + " DIRECT calculations finished with time: " + Logger.getTime(finish - start));
     System.out.println();
