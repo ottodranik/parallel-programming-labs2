@@ -32,7 +32,9 @@
  * 4. pragma omp parallel for if(parallelism_enabled) - like 3, but with condition
  * 5. pragma omp parallel num_threads(3) - set amount of threads
  * 6. pragma omp sections (pragma omp parallel sections) - create sections for parallel
- * 6. pragma omp section - indicates section with NO parallel inside
+ * 7. pragma omp section - indicates section with NO parallel inside
+ *
+ * SYNCHRONIZATION between output in threads - https://stackoverflow.com/a/12383842
  */
 
 #include <iostream>
