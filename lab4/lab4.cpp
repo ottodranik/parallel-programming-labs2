@@ -1,28 +1,47 @@
 /**
- * Lab4. NATIVE C++ std::thread (no Win32)
+ * Lab5. OPENMP library with
  * 
  * NOTES!
- * Native C++ threads tutorial - https://solarianprogrammer.com/2011/12/16/cpp-11-thread-tutorial/
- * Not priority in C++11 - https://stackoverflow.com/a/18884946
- * About thread join - https://stackoverflow.com/a/52307406
+ * !!OPENMP HOW TO!! - https://bisqwit.iki.fi/story/howto/openmp/
+ * !!OPENMP THREADS!! - http://jakascorner.com/blog/2016/05/omp-sections.html
+ * Install gcc with openmp lib - https://github.com/microsoft/LightGBM/issues/3
+ * Usage openmp lib - https://helloacm.com/simple-tutorial-with-openmp-how-to-use-parallel-block-in-cc-using-openmp/
+ * How to build cpp file with gcc (not g++) with (-lstdc++) - https://stackoverflow.com/a/3206195
+ * Matrix in heap - https://stackoverflow.com/questions/1403150/how-do-you-dynamically-allocate-a-matrix
+ * Vector of vectors for matrix - https://stackoverflow.com/questions/12375591/vector-of-vectors-to-create-matrix
+ * C++ classes and imports - https://stackoverflow.com/a/12734036
+ * C++ vector init - https://www.techiedelight.com/initialize-two-dimensional-vector-cpp/
+ * C++ classes tutorial - http://www.cplusplus.com/doc/tutorial/classes/
+ * Executable build file - https://www.taniarascia.com/how-to-create-and-use-bash-scripts/
+ * Work with time clock - https://en.cppreference.com/w/cpp/chrono/time_point
+ * 
+ * 
+ * Simple explanation!
+ * GCC implements this by creating a magic function and moving the associated code
+ * into that function, so that all the variables declared within that block become
+ * local variables of that function (and thus, locals to each thread).
+ * ICC, on the other hand, uses a mechanism resembling fork(), and does not create 
+ * a magic function. Both implementations are, of course, valid, and semantically identical.
  * 
  * 
  * Common usage!
- * std::thread(call_from_thread, param1, param2)
- *
- * Mistake # 5: Not protecting shared data or shared resources with a critical section (eg. mutex)
- * https://www.acodersjourney.com/top-20-cplusplus-multithreading-mistakes/
+ * 0. pragma omp simd - multiple calculations will be performed simultaneously by the processor
+ * 1. pragma omp parallel - creates a team of threads
+ * 2. pragma omp for - splits the for-loop so that each thread in the current team
+ * 3. pragma omp parallel for - like 1 and 2 the same time
+ * 4. pragma omp parallel for if(parallelism_enabled) - like 3, but with condition
+ * 5. pragma omp parallel num_threads(3) - set amount of threads
+ * 6. pragma omp sections (pragma omp parallel sections) - create sections for parallel
+ * 6. pragma omp section - indicates section with NO parallel inside
  */
 
 #include <iostream>
 #include <vector>
 #include <thread>
+#include <omp.h>
 #include "../shared/Matrix.hpp"
-// #include "MatrixCalculations.hpp"
 using namespace std;
 using namespace std::chrono;
-
-std::mutex mu;
 
 Matrix F1Procedure(Matrix MC, Matrix MZ, Matrix B, Matrix MM, Matrix MO, Matrix E);
 Matrix F2Procedure(Matrix MB, Matrix MO, Matrix MC, Matrix MX, Matrix MM);
@@ -64,23 +83,37 @@ int main() {
   MZ.fillRandomValues();
 
   steady_clock::time_point begin = steady_clock::now();
-
+    
   // noThreadsCalcs(MC, MZ, B, MM, MO, E, MB, MX, MD, MT, ME, D, begin);
   
-  // Native THREADs calculations
   begin = steady_clock::now();
+  #pragma omp parallel
+  {
+    #pragma omp sections
+    {
+      #pragma omp section
+      {
+        F1Procedure(MC, MZ, B, MM, MO, E);
+      }
 
-  std::thread t1(F1Procedure, MC, MZ, B, MM, MO, E);
-  std::thread t2(F2Procedure, MB, MO, MC, MX, MM);
-  std::thread t3(F3Procedure, MD, MT, MZ, ME, MM);
-  std::thread t4(F4Procedure, MC, B, MM, D);
+      #pragma omp section
+      {
+        F2Procedure(MB, MO, MC, MX, MM);
+      }
 
-  t1.join();
-  t2.join();
-  t3.join();
-  t4.join();
+      #pragma omp section
+      {
+        F3Procedure(MD, MT, MZ, ME, MM);
+      }
 
-  logTime(begin, "Native THREAD execution finished with time: ");
+      #pragma omp section
+      {
+        F4Procedure(MC, B, MM, D);
+      }
+    }
+  }
+  cout << endl;
+  logTime(begin, "OMP THREAD execution finished with time: ");
 
   return 0;
 }
@@ -148,17 +181,18 @@ void logTime(steady_clock::time_point begin, string msg) {
 }
 
 void loggerStart(string name) {
-  mu.lock();
-  cout << name << " starts on thread with number: " << std::this_thread::get_id() << endl;
-  mu.unlock();
+  #pragma omp critical (cout)
+    cout << name << " starts on thread with number: " << std::this_thread::get_id() << endl;
 }
 
 void loggerEnd(string name, Matrix matrix) {
-  mu.lock();
-  cout << endl;
-  cout << name << " finished on thread with number: " << std::this_thread::get_id() << endl;
-  matrix.displayMatrix();
-  mu.unlock();
+  #pragma omp critical (cout)
+  {
+    cout << endl;
+    cout << name << " finished on thread with number: " << std::this_thread::get_id() << endl;
+  }
+  #pragma omp critical (cout)
+    matrix.displayMatrix();
 }
 
 /**
@@ -177,4 +211,5 @@ void noThreadsCalcs(Matrix MC, Matrix MZ, Matrix B, Matrix MM, Matrix MO, Matrix
   F4Procedure(MC, B, MM, D);
   cout << endl;
   logTime(begin, "DIRECT execution finished with time: ");
+  cout << endl;
 }
