@@ -11,6 +11,7 @@ public class F1 implements Runnable {
     this.name = name.toUpperCase();
   }
 
+  // А=В*(МС+MZ)+E*MM-МО
   @Override
   public void run() {
     long start = 0, finish = 0;

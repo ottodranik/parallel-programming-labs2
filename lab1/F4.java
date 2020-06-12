@@ -11,7 +11,7 @@ public class F4 implements Runnable {
     this.name = name.toUpperCase();
   }
 
-  // O = (P+R)*(MS*MT)
+  // E=В*МС+D*MM
   @Override
   synchronized public void run() {
     long start = 0, finish = 0;

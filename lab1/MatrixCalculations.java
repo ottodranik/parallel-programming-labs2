@@ -2,21 +2,21 @@ package lab1;
 
 public class MatrixCalculations {
 
-  Matrix A = new Matrix(888);
-  Matrix B = new Matrix(888);
-  Matrix D = new Matrix(888);
-  Matrix E = new Matrix(888);
+  Matrix A = new Matrix(10);
+  Matrix B = new Matrix(10);
+  Matrix D = new Matrix(10);
+  Matrix E = new Matrix(10);
 
-  Matrix MA = new Matrix(888, 888);
-  Matrix MB = new Matrix(888, 888);
-  Matrix MC = new Matrix(888, 888);
-  Matrix MD = new Matrix(888, 888);
-  Matrix ME = new Matrix(888, 888);
-  Matrix MM = new Matrix(888, 888);
-  Matrix MO = new Matrix(888, 888);
-  Matrix MT = new Matrix(888, 888);
-  Matrix MX = new Matrix(888, 888);
-  Matrix MZ = new Matrix(888, 888);
+  Matrix MA = new Matrix(10, 10);
+  Matrix MB = new Matrix(10, 10);
+  Matrix MC = new Matrix(10, 10);
+  Matrix MD = new Matrix(10, 10);
+  Matrix ME = new Matrix(10, 10);
+  Matrix MM = new Matrix(10, 10);
+  Matrix MO = new Matrix(10, 10);
+  Matrix MT = new Matrix(10, 10);
+  Matrix MX = new Matrix(10, 10);
+  Matrix MZ = new Matrix(10, 10);
 
   private static MatrixCalculations SINGLE_INSTANCE = null;
 

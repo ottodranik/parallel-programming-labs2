@@ -18,12 +18,12 @@ class Logger {
   synchronized public static void end(String startMessage, String endMessage, Matrix MATRIX) {
     System.out.println();
     System.out.println(startMessage);
-    // MATRIX.displayMatrix();
+    MATRIX.displayMatrix();
     System.out.println(endMessage);
   }
 
   public static void displayMatrix(String fnName, Matrix M) {
     System.out.println("  " + fnName + " finished with data: ");
-    // M.displayMatrix();
+    M.displayMatrix();
   }
 }
