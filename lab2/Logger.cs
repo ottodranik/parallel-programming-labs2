@@ -45,14 +45,14 @@ namespace Lab2App {
       lock(this) {
         Console.WriteLine();
         Console.WriteLine(startMessage);
-        // MATRIX.displayMatrix();
+        MATRIX.displayMatrix();
         Console.WriteLine(endMessage);
       }
     }
 
     public static void displayMatrix(String fnName, Matrix M) {
       Console.WriteLine("  " + fnName + " finished with data: ");
-      // M.displayMatrix();
+      M.displayMatrix();
     }
   }
 }
